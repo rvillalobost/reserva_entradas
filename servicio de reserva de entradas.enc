@@ -1,0 +1,404 @@
+//Proceso Principal
+Proceso Servicio_Reserva_Entradas
+	//Definimos el arreglo que almacenara las posiciones
+	Definir asientos Como Entero;	
+	Dimension asientos[10,10];
+	Definir i,j,a,filas,columnas,aux,listarut Como Entero;
+	//definimos las variables que recorreran el arreglo, desde el indice 0 al indice 9
+	filas <- 9;
+	columnas <- 9;
+	a <- 1;
+	aux <- 0;
+	//la variable se ira incrementado en 1 , y llenando todo el arreglo en orden ascendente
+	Para i<-0 Hasta filas Hacer
+		Para j<-0 Hasta columnas Hacer
+			asientos[i,j]<-a;
+			a <- a+1;
+		FinPara
+	FinPara
+	//Llamamos al subproceso menu para empezar a mostrar las opciones al usuario
+	menu(asientos,filas,columnas);
+	//Fin del proceso
+FinProceso
+
+//0.-Subproceso Menu
+//recibe el arreglo con las posiciones y las variables para recorrerlas
+SubProceso menu(asientos Por Referencia,filas Por Referencia,columnas Por Referencia)
+	//Definimos las variables para almacenar los valores de las entradas
+	Definir eplatinum,egold,esilver,opc Como Entero;
+	eplatinum <- 120000;
+	egold <- 80000;
+	esilver <- 50000;
+	//definimos la variable que almacenara la opcion seleccionada
+	opc <- 0;
+	Escribir "Bienvenido al sistema de venta de entradas";
+	Escribir "concierto VIP de Lucho Marte";
+	Escribir "Presione una tecla para continuar";
+	Esperar Tecla;
+	Borrar Pantalla;
+	//si la opcion ingresada esta entre 1 y 7 se ingresa a la iteracion 
+	//de otro modo nos mostrara un mensaje de error
+	Mientras opc<>7 Hacer
+		Borrar Pantalla;
+		Escribir 'Elija una opcion:';
+		Escribir ' 1) Compra de Entradas';
+		Escribir ' 2) Mostrar Ubicaciones Disponibles';
+		Escribir ' 3) Ver Listado de Asistentes';
+		Escribir ' 4) Buscar Asistente';
+		Escribir ' 5) Reasignar Asiento';
+		Escribir ' 6) Mostrar Ganancias Totales';
+		Escribir ' 7) Salir';
+		Leer opc;
+		Segun opc  Hacer
+				//Segun la opcion seleccionada ingresaremos al subproceso correspondiente
+			1:
+				Borrar Pantalla;
+				VenderEntradas(asientos,filas,columnas);
+			2:
+				Borrar Pantalla;
+				Imprimirarreglo(asientos,filas,columnas);
+				Esperar Tecla;
+				Borrar Pantalla;
+			3:
+				Borrar Pantalla;
+				listar(asientos,filas,columnas);
+			4:
+				buscarasistente(asientos,filas,columnas);
+			5:
+				Reasignar(asientos,filas,columnas);
+			6:
+				Montototal(asientos,filas,columnas,eplatinum,egold,esilver);
+			7:
+				Borrar Pantalla;
+				Escribir 'Programa Finalizado';
+			De Otro Modo:
+				Borrar Pantalla;
+				Escribir 'Ingrese una opcion valida';
+				Escribir "Presione una tecla para continuar";
+				Esperar Tecla;
+				Borrar Pantalla;
+		FinSegun
+	FinMientras
+FinSubProceso
+
+//1.-Subproceso vender entradas, recibe el arreglo con las posiciones y las variables para recorrerlo
+SubProceso VenderEntradas(asientos Por Referencia,filas Por Valor,columnas Por Valor)
+	//definimos las variables que nos ayudaran a recorrerla iteracion segun la cantidad de entradas
+	//que se van a comprar (i,cantidade)
+	Definir cantidade,i,fil,col Como Entero;	
+	Borrar Pantalla;
+	Escribir 'Ingrese la cantidad de entradas a comprar';
+	//leemos la cantidad de entradas que seran compradas
+	Leer cantidade;
+	Borrar Pantalla;
+	//el usuario debe comprar como minimo 1 entrada y como max. 100
+	Si cantidade>0 Y cantidade<=100 Entonces
+		Para i<-1 Hasta cantidade Hacer
+			//reiniciamos el valor de las variables que recorren el indice
+			fil <- 0;
+			col <- 0;
+			Repetir
+				Borrar Pantalla;
+				Escribir 'Platinum, Desde la entrada 1 a la 20 el precio es: $120.000';
+				Escribir 'Gold, Desde la entrada 21 a la 50 el precio es: $80.000';
+				Escribir 'Silver, desde la 51 a la 100 el valor es: $50.000';
+				Escribir "";
+				//llamamos al subproceso imprimirarreglo para que imprima las posiciones ordenadas
+				Imprimirarreglo(asientos,filas,columnas);
+				Escribir "";
+				Escribir 'Elija la fila';
+				//leemos la fila
+				Leer fil;
+				//sabemos que la fila vale 0, que es el indice minimo del arreglo,
+				//como el menor numero que puede ingresar el usuario es 1 le restamos -1 para que el valor sea ingresado
+				//en el indice correcto				
+				fil=fil-1;
+				Si fil>=0 Y fil<=10 Entonces
+					Repetir
+						
+						Escribir 'Elija la columna';
+						//leemos la columna
+						Leer col;
+						//sabemos que la fila vale 0, que es el indice minimo del arreglo,
+						//como el menor numero que puede ingresar el usuario es 1 le restamos -1 para que el valor sea ingresado
+						//en el indice correcto	
+						col=col-1;
+						//si el numero ingresado esta entre el rango de 0 y 10, y esa posicion no tiene 
+						//un numero almacenado menor a 99999 (largo minimo del rut) entonces se almacena el rut en 
+						//la posicion seleccionada
+						Si col>=0 Y col<=10 Y asientos[fil,col]<99999 Entonces
+							Borrar Pantalla;
+							Escribir 'Ingrese el RUT del comprador';
+							Repetir
+								Leer asientos[fil,col];
+								Si asientos[fil,col]>99999 Entonces
+									Borrar Pantalla;
+									Escribir ' RUT ingresado al asiento';
+									Escribir "";
+									Escribir "Presione una tecla para continuar";
+									Esperar Tecla;
+									Borrar Pantalla;
+								Sino
+									//en el caso que el usuario ingrese un numero menor a 6 digitos
+									//se le mostrara un mensaje de error
+									Borrar Pantalla;
+									Escribir 'Debe ingresar un RUT de al menos 6 digitos';
+									Escribir "";
+									Escribir "Presione una tecla para continuar";
+									Esperar Tecla;
+									Borrar Pantalla;
+								FinSi
+								//la iteracion se repite hasta que el usuario ingrese un rut valido
+							Hasta Que asientos[fil,col]>99999
+						Sino
+							Borrar Pantalla;
+							Escribir 'El asiento esta ocupado o opcion invalida';
+							Escribir "";
+							Escribir "Presione una tecla para continuar";
+							Esperar Tecla;
+							Borrar Pantalla;
+						FinSi
+					Hasta Que col>=0 Y col<=10
+				Sino
+					//si el usuario ingresa una columna no valida, enviamos el mensaje de error
+					Borrar Pantalla;
+					Escribir 'Ingrese una opcion Valida';
+					Escribir "";
+					Escribir "Presione una tecla para continuar";
+					Esperar Tecla;
+					Borrar Pantalla;
+				FinSi
+			Hasta Que fil>=0 Y fil<=10
+		FinPara
+	Sino
+		//si la cantidad de entradas no es valida enviamos mensaje de error
+		Borrar Pantalla;
+		Escribir 'Ingrese una cantidad valida';
+		Escribir "";
+		Escribir "Presione una tecla para continuar";
+		Esperar Tecla;
+		Borrar Pantalla;
+	FinSi
+	//fin subproceso vender entradas
+FinSubProceso
+
+//2.-Subproceso mostrar asientos disponibles, recibe el arreglo y las variables para recorrerlo
+SubProceso Imprimirarreglo(asientos Por Referencia,filas Por Valor,columnas Por Valor)
+	Definir i,j Como Entero;
+	Escribir '            _________________________ ';
+	Escribir '           |                         |';
+	Escribir '           |        ESCENARIO        |';
+	Escribir '           |                         |';
+	Escribir '           |_________________________|';
+	Escribir '                                      ';
+	//recorremos el arreglo de izq a derecha y de arriba hacia abajo
+	Para i<-0 Hasta filas Hacer
+		Para j<-0 Hasta columnas Hacer
+			//si encontramos un indice que contenga un rut, entonces imprimimos una "X"
+			Si asientos[i,j]>100 Entonces
+				Escribir '|X|' Sin Saltar;
+			Sino
+				//sino solo imprimimos el numero del indice(asiento)
+				Escribir ' |',asientos[i,j],'|' Sin Saltar;
+			FinSi
+		FinPara
+		Escribir ' ';
+	FinPara
+FinSubProceso
+
+//3.- Subproceso listar asistentes
+// subproceso listar asistentes(recibe el arreglo)
+SubProceso listar(asientos Por Referencia,filas Por Valor,columnas Por Valor)
+	// creamos un arreglo que almacene todos los ruts registrados
+	Definir i,j,k,aux,listarut,listarutc Como Entero;
+	Definir Ver Como Logico;
+	// definimos el tamaño del nuevo arreglo en 100
+	Dimension listarut[100];
+	listarutc <- 0;
+	Ver <- Verdadero;
+	Escribir 'Procesando...';
+	// llenamos el nuevo arreglo
+	Para i<-0 Hasta filas Hacer
+		Para j<-0 Hasta columnas Hacer
+			listarut[listarutc] <- asientos[i,j];
+			listarutc <- listarutc+1;
+		FinPara
+	FinPara
+	// recorremos el arreglo buscando el numero mayor
+	Para listarutc<-0 Hasta 98 Hacer
+		Si listarut[listarutc]>listarut[listarutc+1] Entonces
+			// si lo encontramos lo almacenamos en una variable temporal
+			aux <- listarut[listarutc];
+			listarut[listarutc] <- listarut[listarutc+1];
+			// reemplazamos el numero menor un espacio mas alla en el indice
+			listarut[listarutc+1]<-aux;
+		FinSi
+	FinPara
+	j <- 1;
+	Borrar Pantalla;
+	// imprimimos los indices que contengan un valor superior a 99999 (rut)
+	Para i<-0 Hasta 99 Hacer
+		Si listarut[i]>99999 Entonces
+			Escribir 'Asistente N°',j,' RUT: ',listarut[i];
+			j <- j+1;
+		FinSi
+	FinPara
+	Escribir 'Presione una tecla para continuar';
+	Esperar Tecla;
+	Borrar Pantalla;
+	// fin subproceso listar asistentes
+FinSubProceso
+
+//4.- Subproceso buscar asistente por su rut, recibe el arreglo, y las variables para recorrerlo
+SubProceso buscarasistente(asientos Por Referencia,filas Por Valor,columnas Por Valor)
+	//definimos una variable para almacenar el rut a consultar
+	Definir rut Como Entero;
+	Definir i,j Como Entero;
+	//definimos una  variable logica para indicarnos si el rut existe dentro del arreglo
+	Definir comp Como Logico;
+	//La iniciamos en falso
+	comp <- Falso;
+	Borrar Pantalla;
+	Escribir 'Ingrese el RUT del dueño del asiento';
+	//solicitamos el rut a consultar y lo almacenamos
+	Leer rut;
+	Escribir "Procesando ...";
+	//recorremos el arreglo comparando el rut ingresado contra el dato que esta almacenado en cada espacio del arreglo
+	Para i<-0 Hasta filas Hacer
+		Para j<-0 Hasta columnas Hacer
+			//si encontramos una coincidencia, enviamos la informacion por pantalla
+			Si rut=asientos[i,j] Entonces
+				Borrar Pantalla;
+				Escribir 'Este RUT tiene el asiento en la fila: ',i+1,' columna: ',j+1,', puede pasar';
+				//cambiamos la variable logica a verdadera para que salga del ciclo
+				comp <- Verdadero;
+				Escribir "";
+				Escribir "Presione una tecla para continuar";
+				Esperar Tecla;
+				Borrar Pantalla;
+			FinSi
+		FinPara
+	FinPara
+	//si no hubo coincidencias,la variable logica se mantiene en falso y salimos del subproceso
+	Si comp=Falso Entonces
+		Borrar Pantalla;
+		Escribir 'Este RUT no tiene ningun asiento asignado';
+		Escribir "";
+		Escribir "Presione una tecla para continuar";
+		Esperar Tecla;
+		Borrar Pantalla;
+	FinSi
+	//fin subproceso buscar asistente
+FinSubProceso
+
+//5.-Subproceso reasignar asientos, recibe el arreglo y las variables para recorrerlo
+SubProceso Reasignar(asientos Por Referencia,filas Por Valor,columnas Por Valor)
+	//definimos una variable para almacenar el rut a consultar,y las variables que tomaran el valor de fila y columna
+	//definimos una variable logica para comprobar que el rut este verificado
+	Definir rut Como Entero;
+	Definir i,j Como Entero;
+	Definir ver Como Logico;
+	//definimos la flag como false para que entre al ciclo
+	ver = Falso;
+	Borrar Pantalla;
+	Escribir 'Ingrese el RUT del comprador del asiento';
+	//pedimos el rut a reacomodar
+	Leer rut;
+	Para i<-0 Hasta filas Hacer
+		Para j<-0 Hasta columnas Hacer
+			//si el rut es igual al dato almacenado en el indice entonces reemplazamos el dato
+			Si rut=asientos[i,j] y ver = Falso Entonces
+				Escribir 'Este rut tiene el asiento en la fila: ',i+1,' columna: ',j+1;
+				Escribir "";
+				Escribir 'Ingrese el RUT del nuevo dueño';
+				Repetir
+					//creamos un ciclo para modificar el rut, asi nos aseguramos que el rut ingresado cumpla 
+					//lo solicitado
+					Leer asientos[i,j];
+					Si asientos[i,j]>99999 Entonces
+						Si rut<>asientos[i,j] Entonces
+							Borrar Pantalla;
+							Escribir 'RUT del asiento ha sido cambiado';
+							ver = Verdadero;
+							Escribir "Presione una tecla para continuar";
+							Esperar Tecla;
+							Borrar Pantalla;
+						Sino
+							//si el rut no es distinto del actual, envia mensaje de error
+							Borrar Pantalla;
+							Escribir 'Debe ingresar un rut distinto al actual';
+							Escribir "";
+							Escribir "Presione una tecla para continuar";
+							Esperar Tecla;
+							Borrar Pantalla;
+						FinSi
+						//si el rut no tiene 6 digitos entonces arroja mensaje de error
+					Sino
+						Borrar Pantalla;
+						Escribir 'Debe ingresar un rut de al menos 6 digitos';
+						Escribir "";
+						Escribir "Presione una tecla para continuar";
+						Esperar Tecla;
+						Borrar Pantalla;
+					FinSi
+					//esto se va a repetir hasta que el rut sea distinto del actual y tenga 6 digitos
+				Hasta Que rut<>asientos[i,j] Y asientos[i,j]>99999
+			FinSi
+		FinPara
+	FinPara
+	//fin subproceso reasignar asientos
+FinSubProceso
+
+//6.-Subproceso monto total recaudado, recibe el arreglo , las variables para recorrerlo y los valores de las entradas
+SubProceso Montototal(asientos Por Referencia,filas Por Referencia,columnas Por Referencia,eplatinum Por Referencia,egold Por Referencia,esilver Por Referencia)
+	//definimos las variables que almacenaran los distintos totales y las inicializamos en 0
+	Definir i,j,totalp,totalg,totals,totaltotal Como Entero;
+	totalp <- 0;
+	totalg <- 0;
+	totals <- 0;
+	//recorremos el arreglo desde el indice 1 al 20 (0-19) y almacenamos todos los indices que tengan un rut
+	//guardaremos este dato en totalp (total de entradas platinum)
+	Para i<-0 Hasta filas Hacer
+		Para j<-0 Hasta columnas Hacer
+			Si i<=2 Y i>=0 Entonces
+				Si asientos[i,j]>99999 Entonces
+					totalp <- totalp+1;
+				FinSi
+			FinSi
+			//seguimos recorriendo el arreglo desde el indice 21 al 53(20-52) y almacenamos todos los indices que tengan un rut
+			//guardaremos este dato en totalg (total de entradas gold)
+			Si i<=5 Y i>=3 Entonces
+				Si asientos[i,j]>99999 Entonces
+					totalg <- totalg+1;
+				FinSi
+			FinSi
+			//seguimos recorriendo el arreglo desde el indice 54 al 100(53-99) y almacenamos todos los indices que tengan un rut
+			//guardaremos este dato en totals (total de entradas silver)
+			Si i<=10 Y i>=6 Entonces
+				Si asientos[i,j]>99999 Entonces
+					totals <- totals+1;
+				FinSi
+			FinSi
+		FinPara
+	FinPara
+	//almacenamos el total de todas la entradas,multiplicando su cantidad por el valor y sumando todo
+	totaltotal <- totalp*eplatinum+totalg*egold+totals*esilver;
+	Borrar Pantalla;
+	//mostramos la informacion detallada, multiplicando la cantidad de cada tipo de entrada por su valor
+	Escribir 'Tipo Entrada                  Cantidad        Total';
+	Escribir "";
+	Escribir 'Entradas Platinum $120.000       ',totalp,'              $',totalp*eplatinum;
+	Escribir 'Entradas Gold     $80.000        ',totalg,'              $',totalg*egold;
+	Escribir 'Entradas Silver   $50.000        ',totals,'              $',totals*esilver;
+	//mostramos el total de todas las entradas
+	Escribir "";
+	Escribir 'Total de Entradas                ',totals+totalg+totalp,'              $',totaltotal;
+	Esperar Tecla;
+	Borrar Pantalla;
+	//fin subproceso monto total 
+FinSubProceso
+
+
+//**Rodolfo Villalobos
+//**José Huircaman
+//Seccion 008V
